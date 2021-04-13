@@ -1,4 +1,4 @@
-# designkonzept2020
+# ratenkauf by easyCredit Checkout
 
 ## Project setup
 ```

@@ -1,123 +1,123 @@
 <template>
-  <div class="ec-checkout">
-    <div class="form-radio">
-      <input class="form-radio-input" type="radio" name="paymentMethod" id="paymentMethod" value="" checked>
-      <label class="form-radio-label" for="paymentMethod">
-          {{ title }}<br>
-          <small>{{ message }}</small>
-      </label>
+  <div class="ec-checkout" v-if="isActive">
+    <div class="ec-payment-plan" v-if="!paymentPlan">
+      <strong>Ihre Auswahl</strong><br />
+      {{ JSON.parse(paymentPlan) }}
     </div>
-
-    <div
-      class="ec-checkout__alert"
-      v-if="alert.code"
-      v-html="alert.msg"
-    >
-    </div>
-
-    <div
-      class="ec-checkout__body"
-      :class="bodyClasses"
-      v-if="alert.code !== 'total'"
-    >
-      <ul class="ec-checkout__instalments base">
-        <instalment
-          v-for="(item, index) in listBase"
-          v-bind:index="index"
-          v-bind:instalment="item"
-          v-bind:key="item.months"
-        />
-      </ul>
-      <ul
-        class="ec-checkout__instalments extended"
-        :class="listClasses"
+    <div class="ec-checkout-wrapper" v-if="paymentPlan">
+      <div
+        class="ec-checkout__alert"
+        v-if="alert"
+        v-html="alert"
       >
-        <instalment
-          v-for="(item, index) in listExtended"
-          v-bind:index="list.rows + index"
-          v-bind:instalment="item"
-          v-bind:key="item.months"
-        />
-      </ul>
-      <ul class="ec-checkout__instalments actions">
-        <li
-          @click="toggleList"
-          class="more"
-          :class="listClasses"
-        >
-          {{ list.button }}
-        </li>
-      </ul>
-
-      <ul class="ec-checkout__totals">
-        <li>
-          <span>Zinsen</span>
-          <span>{{ totals.interest }} €</span>
-        </li>
-        <li class="total">
-          <span>Gesamtbetrag</span>
-          <span>{{ totals.total }} €</span>
-        </li>
-      </ul>
-
-      <div class="ec-checkout__actions form-submit">
-        <a
-          @click="toggleModal"
-          class="btn btn-primary"
-        >{{ button }}</a>
       </div>
 
-      <p class="ec-checkout__small-print">
-        <small>
-          {{ smallprint }}
-        </small>
-      </p>
-    </div>
-
-    <div
-      class="ec-checkout__modal"
-      :class="modalClasses"
-    >
       <div
-        @click="toggleModal"
-        class="close"
-      ></div>
-      <h3 class="heading">{{ modal.heading }}</h3>
-      <form>
+        class="ec-checkout__body"
+        :class="bodyClasses"
+        v-if="!alert"
+      >
+        <ul class="ec-checkout__instalments base">
+          <instalment
+            v-for="(item, index) in listBase"
+            v-bind:index="index"
+            v-bind:instalment="item"
+            v-bind:key="item.anzahlRaten"
+          />
+        </ul>
+        <ul
+          class="ec-checkout__instalments extended"
+          :class="listClasses"
+        >
+          <instalment
+            v-for="(item, index) in listExtended"
+            v-bind:index="list.rows + index"
+            v-bind:instalment="item"
+            v-bind:key="item.anzahlRaten"
+          />
+        </ul>
+        <ul class="ec-checkout__instalments actions">
+          <li
+            @click="toggleList"
+            class="more"
+            :class="listClasses"
+          >
+            {{ list.button }}
+          </li>
+        </ul>
+
+        <ul class="ec-checkout__totals">
+          <li>
+            <span>Zinsen</span>
+            <span>{{ totals.interest | formatCurrency }} €</span>
+          </li>
+          <li class="total">
+            <span>Gesamtbetrag</span>
+            <span>{{ totals.total | formatCurrency }} €</span>
+          </li>
+        </ul>
+
+        <div class="ec-checkout__actions form-submit">
+          <button
+            type="button"
+            v-on:click.stop="toggleModal"
+            class="btn btn-primary"
+          >{{ button }}</button>
+        </div>
+
+        <p class="ec-checkout__small-print">
+          <small v-html="example" />
+        </p>
+      </div>
+
+      <div
+        class="ec-checkout__modal"
+        :class="modalClasses"
+      >
+        <div
+          @click="toggleModal"
+          class="close"
+        ></div>
+        <h3 class="heading">{{ modal.heading }}</h3>
         <div class="title">
-          <p><strong>{{ modal.title.msg }}</strong></p>
+          <p><strong>{{ modal.prefix.msg }}</strong></p>
           <div class="form-radio badges">
-            <input class="form-check-input" type="radio" name="modalTitle" id="modalTitleMr" value="">
-            <label class="form-check-label" for="modalTitleMr">
-              {{ modal.title.mr }}
-            </label>
-            <input class="form-check-input" type="radio" name="modalTitle" id="modalTitleMs" value="">
-            <label class="form-check-label" for="modalTitleMs">
-              {{ modal.title.ms }}
-            </label>
+            <span  v-for="(label, key) in modal.prefix.options" v-bind:key="key">
+              <input class="form-check-input"
+                  type="radio"
+                  name="easycredit-prefix"
+                  :id="'modalPrefix' + key"
+                  v-on:change.stop="prevent"
+                  v-model="modal.prefix.value"
+                  v-bind:value="key"
+                  />
+              <label class="form-check-label" :for="'modalPrefix' + key">
+                {{ label }}
+              </label>
+            </span>
           </div>
         </div>
         <div class="privacy">
-          <p><strong>{{ modal.terms.msg }}</strong></p>
+          <p><strong>{{ modal.agreement.msg }}</strong></p>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="modalTerms" id="modalTerms" value="" checked>
-            <label class="form-check-label" for="modalTerms">
-              <small>{{ modal.terms.label }}</small>
+            <input class="form-check-input" type="checkbox" name="easycredit-agreement" id="modalAgreement" value="1" v-model="modal.agreement.checked" v-on:change.stop="prevent">
+            <label class="form-check-label" for="modalAgreement">
+              <small>{{ modal.agreement.label }}</small>
             </label>
           </div>
         </div>
         <div class="form-submit">
-          <a class="btn btn-primary">{{ modal.button }}</a>
+          <button class="btn btn-primary" type="button" @click="onSubmit" :disabled="submitDisabled">{{ modal.button.label }}</button>
         </div>
-      </form>
+      </div>
+      <div
+        @click="toggleModal"
+        class="ec-checkout__modal-backdrop"
+        :class="modalClasses"
+      ></div>
     </div>
-    <div
-      @click="toggleModal"
-      class="ec-checkout__modal-backdrop"
-      :class="modalClasses"
-    ></div>
 
-    <div class="ec-checkout__sandbox">
+    <!-- div class="ec-checkout__sandbox">
       <strong>Ansicht wählen:</strong>
       <a
         @click="clearAlert"
@@ -131,51 +131,40 @@
       <a
         @click="setAlert('total')"
       >Bestellsumme unzulässig</a>
-    </div>
+    </div -->
   </div>
 </template>
 
 <script>
 import Instalment from './Instalment.vue'
 import {bus} from '../main.js'
+import fetchJsonp from 'fetch-jsonp'
 
 export default {
   name: 'Checkout',
   components: {
     Instalment
   },
+  props: {
+    isActive: { 
+      type: Boolean, 
+      default: true 
+    },
+    amount: Number,
+    webshopId: String,
+    alert: String,
+    paymentPlan: {
+      type: String,
+      default: null
+    }
+  },
   data () {
     return {
       title: 'ratenkauf by easyCredit',
-      message: 'Der einfachste Ratenkauf Deutschlands',
-      smallprint: 'Sollzinssatz p.a. fest für die gesamte Laufzeit 8,64 %; effektiver Jahreszins 8,99 %',
+      message: 'Ganz entspannt in Raten zahlen.',
+      example: null,
       button: 'Weiter zum Ratenkauf',
-      alert: {
-        code: null,
-        msg: null,
-        text: {
-          b2c: 'ratenkauf by easyCredit ist nur für Privatpersonen verfügbar.',
-          address: 'Für ratenkauf by easyCredit müssen die Versand- und die Rechnungs&shy;adresse identisch sein. <a href="">Jetzt anpassen</a>',
-          total: 'Die Bestellsumme liegt außerhalb der zulässigen Beträge (200&nbsp;-&nbsp;10.000&nbsp;€).'
-        }
-      },
-      instalments: [
-        { months: 60, instalment: '83,00', interest: '929,81', total: '4.928,81' },
-        { months: 54, instalment: '90,00', interest: '837,64', total: '4.836,64' },
-        { months: 48, instalment: '99,00', interest: '743,41', total: '4.742,41' },
-        { months: 42, instalment: '111,00', interest: '647,08', total: '4.646,08' },
-        { months: 36, instalment: '127,00', interest: '552,43', total: '4.551,43' },
-        { months: 33, instalment: '137,00', interest: '506,45', total: '4.505,45' },
-        { months: 30, instalment: '149,00', interest: '460,68', total: '4.459,68' },
-        { months: 27, instalment: '164,00', interest: '414,26', total: '4.413,26' },
-        { months: 24, instalment: '183,00', interest: '367,77', total: '4.366,77' },
-        { months: 21, instalment: '206,00', interest: '324,08', total: '4.323,08' },
-        { months: 18, instalment: '238,00', interest: '278,69', total: '4.277,69' },
-        { months: 15, instalment: '283,00', interest: '233,58', total: '4.232,58' },
-        { months: 12, instalment: '350,00', interest: '189,14', total: '4.188,14' },
-        { months: 9, instalment: '461,00', interest: '145,20', total: '4.144,20' },
-        { months: 6, instalment: '684,00', interest: '101,31', total: '4.100,31' }
-      ],
+      instalments: [],
       list: {
         rows: 5,
         selected: null,
@@ -190,75 +179,131 @@ export default {
       modal: {
         show: false,
         heading: 'Weiter zum Ratenkauf',
-        title: {
+        prefix: {
+          value: null,
           msg: 'Für ratenkauf by easyCredit bitte eine Anrede auswählen:',
-          mr: 'Herr',
-          ms: 'Frau'
+          options: {
+            "HERR": 'Herr',
+            "FRAU": 'Frau'
+          }
         },
-        terms: {
+        agreement: {
           msg: 'Bitte stimmen Sie der Datenübermittlung zu:',
           label: 'Ja, ich möchte per Ratenkauf zahlen. Ich habe zur Kenntnis genommen, dass Testshop2 Ratenkauf der TeamBank AG (Partner der Genossenschaftlichen FinanzGruppe Volksbanken Raiffeisenbanken), Beuthener Str. 25, 90471 Nürnberg zur Bonitätsprüfung personenbezogene Daten wie Anrede und Name, Geburtsdatum und -ort, Kontaktdaten (Adresse, Telefon, E-Mail) sowie Angaben zur aktuellen und zu früheren Bestellungen übermittelt und das Prüfungs-ergebnis zum Zweck des Ratenkaufabschlusses erhält.',
+          checked: false
         },
-        button: 'Akzeptieren'
+        button: {
+          label: 'Akzeptieren',
+          isDisabled: false
+        }
       }
     }
   },
   methods: {
-    toggleList: function () {
-      this.list.collapsing = !this.list.collapsing;
-      setTimeout(() => this.list.collapsing = !this.list.collapsing, 350);
-      setTimeout(() => this.list.collapsed = !this.list.collapsed, 350);
-      this.list.button = !this.list.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -';
+    onSubmit (...args) {
+      this.modal.button.isDisabled = true
+      this.$emit('submit', ...args)
+      this.modal.button.isDisabled = false
+    },
+    toggleList () {
+      this.list.collapsing = !this.list.collapsing
+      setTimeout(() => this.list.collapsing = !this.list.collapsing, 350)
+      setTimeout(() => this.list.collapsed = !this.list.collapsed, 350)
+      this.list.button = !this.list.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -'
 
       if ( this.list.selected >= this.list.rows ) {
-        bus.$emit('instalmentToggleReset');
+        bus.$emit('instalmentToggleReset')
       }
     },
-    setAlert: function (code) {
-      this.alert.code = code;
-      this.alert.msg = this.alert.text[code];
+    toggleModal () {
+      this.modal.show = !this.modal.show
+      if (!this.modal.show) {
+        this.modal.button.isDisabled = true
+      }
     },
-    clearAlert: function () {
-      this.alert.code = null;
-      this.alert.msg = null;
+    prevent () {
+      return null
     },
-    toggleModal: function () {
-      this.modal.show = !this.modal.show;
+    isPrefixValid () {
+      return Object.keys(this.modal.prefix.options)
+        .indexOf(this.modal.prefix.value) >= 0
+    },
+    getInstalments () {
+      fetchJsonp('//ratenkauf.easycredit.de/ratenkauf-ws/rest/v2/modellrechnung/durchfuehren?webshopId=' + this.webshopId + '&finanzierungsbetrag=' + this.amount)
+        .then((response) => {
+          return response.json()
+        }).then((json) => {
+          this.instalments = json.ergebnis.reverse()
+          this.example = json.repraesentativesBeispiel
+
+          if (this.instalments.length > 0) {
+            this.totals.interest = this.instalments[0].zinsen.anfallendeZinsen
+            this.totals.total = this.instalments[0].gesamtsumme
+          }
+        }).catch(() => {
+          this.alert = 'Die Bestellsumme liegt außerhalb der zulässigen Beträge (200&nbsp;-&nbsp;10.000&nbsp;€).'
+        })
+    },
+    getAgreement () {
+      fetchJsonp('//ratenkauf.easycredit.de/ratenkauf-ws/rest/v2/texte/zustimmung/' + this.webshopId)
+        .then((response) => {
+          return response.json()
+        }).then((json) => {
+          this.modal.agreement.label = json.zustimmungDatenuebertragungPaymentPage
+        }).catch((e) => {
+          console.log(e)
+          this.alert = 'Es ist ein Fehler aufgetreten.'
+        })
+    },
+    prefixValid() {
+      this.prefix
+    }
+  },
+  filters: {
+    formatCurrency (value) {
+      return value.replace('.', ',');
     }
   },
   computed: {
-    bodyClasses: function () {
+    bodyClasses () {
       return {
-        'faded': this.alert.code
-      };
+        'faded': this.alert
+      }
     },
-    listBase: function () {
+    listBase () {
       return this.instalments.slice(0, this.list.rows)
     },
-    listExtended: function () {
+    listExtended () {
       return this.instalments.slice(this.list.rows)
     },
-    listClasses: function () {
+    listClasses () {
       return {
         'collapsing': this.list.collapsing,
         'collapsed': this.list.collapsed
-      };
+      }
     },
-    modalClasses: function () {
+    modalClasses () {
       return {
         'show': this.modal.show
-      };
+      }
+    },
+    submitDisabled () {
+      return this.modal.button.isDisabled || 
+        !this.modal.agreement.checked ||
+        !this.isPrefixValid()
     }
   },
-  mounted () {
-    this.totals.interest = this.instalments[0].interest;
-    this.totals.total = this.instalments[0].total;
-
+  async mounted () {
     bus.$on('instalmentToggled', (data) => {
-      this.list.selected = data;
-      this.totals.interest = this.instalments[data].interest;
-      this.totals.total = this.instalments[data].total;
-    });
+      this.list.selected = data
+      this.totals.interest = this.instalments[data].zinsen.anfallendeZinsen
+      this.totals.total = this.instalments[data].gesamtsumme
+    })
+
+    if (!this.alert) {
+      await this.getInstalments(this.amount)
+      await this.getAgreement()
+    }
   }
 }
 </script>

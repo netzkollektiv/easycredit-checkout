@@ -1,9 +1,17 @@
 <template>
   <li
-    @click="toggleInstalment"
+    v-on:click.prevent="toggleInstalment"
     :class="instalmentClasses"
   >
-    <span>{{ instalment.months }} Monate</span> <span>{{ instalment.instalment }} € / Monat</span>
+    <label :for="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten">
+      <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate | formatCurrency }} € / Monat</span>
+    </label>
+    <input 
+      type="radio" 
+      name="easycredit-instalment" 
+      :id="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten" 
+      :value="instalment.zahlungsplan.anzahlRaten" 
+    />
   </li>
 </template>
 
@@ -30,6 +38,11 @@ export default {
       if ( this.index === 0 ) {
         this.toggleInstalment();
       }
+    }
+  },
+  filters: {
+    formatCurrency (value) {
+      return value.replace('.', ',');
     }
   },
   computed: {

@@ -13,11 +13,16 @@ $error: #e90202;
 // - Font colors
 $font-color: #000;
 $font-color-disabled: rgba($font-color,0.4);
+// $font-color-label: #4B4B4B;
+$font-color-label-secondary: #7F7F7F; // equal to rgba($font-color,.5)
 $link-color: $ec-secondary;
 
 // - Breakpoints
 $breakpoint-sm-down: 767px;
 $breakpoint-sm-up: 768px;
+
+// - Widths
+$desktop-max-width: 350px;
 
 // - Typo
 $font-family: Helvetica, Arial, sans-serif;
@@ -40,14 +45,9 @@ $border-radius-xl: 10px;
 $transition: all 0.15s ease-in-out;
 $transition-timing: cubic-bezier(0.73, 0.32, 0.14, 0.99);
 
-body {
-  margin: 0;
-  padding: 0;
-  background-color: $white;
-}
-
 // App
-#app {
+easycredit-checkout-label,
+easycredit-checkout {
   font-family: $font-family;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -56,7 +56,8 @@ body {
   -webkit-text-size-adjust: none;
 
   // Vue demo settings
-  @media (min-width: $breakpoint-sm-up) {
+  /*
+  /@media (min-width: $breakpoint-sm-up) {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -65,7 +66,8 @@ body {
   @media (max-width: $breakpoint-sm-down) {
     padding-bottom: 60px;
   }
-
+  */
+  
   // Links
   a {
     color: $link-color;
@@ -81,12 +83,14 @@ body {
   .btn {
     display: inline-block;
     padding: 10px 20px;
-    border-radius: 20px;
     background-color: $ec-blue;
+    border: 0;
+    border-radius: 20px;
     transition: all 0.1s $transition-timing;
     cursor: pointer;
     font-weight: bold;
     color: $white;
+    line-height: 1.4;
 
     &.btn-primary {
       background-color: $ec-primary;
@@ -96,12 +100,23 @@ body {
     &:active,
     &:focus,
     &:visited {
-      background-color: $ec-secondary;
-      color: $white;
+      background-color: $ec-secondary !important;
+      color: $white !important;
 
       &.btn-primary {
-        background-color: $ec-primary-dark;
+        background-color: $ec-primary-dark !important;
       }
+    }
+    &:active,
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba($ec-primary, .4) !important;
+    }
+
+    &:disabled, &.disabled {
+      cursor: default;
+      pointer-events: none;
+      background-color: rgba($ec-primary, .5) !important;
+      color: $white;
     }
   }
 
@@ -116,79 +131,91 @@ body {
     font-size: $font-size-xs;
   }
 
-  // Checkout
-  .ec-checkout {
-    padding: 30px 20px;
-    width: 100%;
+  // Forms
+  .form-radio,
+  .form-check {
+    display: flex;
 
-    @media (min-width: $breakpoint-sm-up) {
-      padding: 30px 25px;
-      max-width: 320px;
-      border-radius: $border-radius-xl;
-      box-shadow: 0 0 25px rgba(0,0,0,.15);
+    label {
+      display: inline-block;
+      margin-top: -.5px;
+      padding-left: 0;
+      width: 100%;
+      vertical-align: top;
+      cursor: pointer;
+      user-select: none;
+
+      small {
+        font-weight: normal;
+      }
     }
 
-    @media (max-width: $breakpoint-sm-down) {
-      box-sizing: border-box;
-    }
-
-    .form-radio,
-    .form-check {
-      display: flex;
+    &.badges {
+      input {
+        display: none;
+      }
 
       label {
         display: inline-block;
-        margin-top: -.5px;
-        padding-left: 10px;
-        width: 100%;
-        vertical-align: top;
+        margin-right: 10px;
+        padding: 7px 25px;
+        width: auto;
+        border-radius: $border-radius-lg;
+        background-color: $ec-gray;
+        transition: all 0.1s $transition-timing;
         cursor: pointer;
-        user-select: none;
-
-        small {
-          font-weight: normal;
-        }
-      }
-
-      label[for='paymentMethod'] {
-        padding-right: 45px;
-        background: transparent url('../img/ratenkauf-icon.svg') right center no-repeat;
-        background-size: 35px;
+        text-align: center;
+        font-size: $font-size-sm;
         font-weight: bold;
-
-        small {
-          color: rgba($font-color,.5);
-        }
+        color: $font-color;
       }
-
-      &.badges {
-        input {
-          display: none;
-        }
-
-        label {
-          display: inline-block;
-          margin-right: 10px;
-          padding: 7px 25px;
-          width: auto;
-          border-radius: $border-radius-lg;
-          background-color: $ec-gray;
-          transition: all 0.1s $transition-timing;
-          cursor: pointer;
-          text-align: center;
-          font-size: $font-size-sm;
-          font-weight: bold;
-          color: $font-color;
-        }
-        input[type='radio']:checked+label {
-          background-color: $ec-blue;
-          color: $white;
-        }
+      input[type='radio']:checked+label {
+        background-color: $ec-secondary;
+        color: $white;
       }
     }
-    .form-submit {
-      margin-top: 20px;
-      text-align: right;
+  }
+  .form-submit {
+    margin-top: 20px;
+    text-align: right;
+  }
+
+  // Checkout Label
+  .ec-checkout-label {
+    padding-right: 45px;
+    min-height: 35px;
+    background: transparent url('../img/ratenkauf-icon.svg') right center no-repeat;
+    background-size: 35px;
+
+    @media (min-width: $breakpoint-sm-up) {
+      max-width: $desktop-max-width;
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
+    small {
+      color: $font-color-label-secondary;
+    }
+  }
+
+  // Checkout
+  .ec-checkout {
+    margin-top: 20px;
+    padding: 30px 25px;
+    width: 100%;
+    background: $white !important;
+    border-radius: $border-radius-xl;
+    box-shadow: 0 0 25px rgba(0,0,0,.1);
+
+    @media (min-width: $breakpoint-sm-up) {
+      max-width: $desktop-max-width;
+    }
+
+    @media (max-width: $breakpoint-sm-down) {
+      padding: 25px 20px;
+      box-sizing: border-box;
     }
 
     &__alert {
@@ -264,8 +291,11 @@ body {
       border-color: $ec-gray-2;
       border-radius: $border-radius-lg $border-radius-lg 0 0;
 
+      input {
+        display:none;
+      }
+
       &.base {
-        margin-top: 20px;
         border-top-width: 2px;
       }
 
@@ -273,7 +303,7 @@ body {
         max-height: 462px;
         transition: all .35s ease;
         border-radius: 0;
-  
+
         // Opening
         &.collapsed {
           overflow: hidden;
@@ -304,36 +334,51 @@ body {
       }
 
       li {
-        display: flex;
-        justify-content: space-between;
-        padding: 0 15px;
-        height: 40px;
-        border-bottom: 2px solid $ec-gray-2;
-        cursor: pointer;
-        line-height: 40px;
-        font-weight: bold;
+        label {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin: 0;
+          padding: 0 15px;
+          height: 40px;
+          border-bottom: 2px solid $ec-gray-2;
+          cursor: pointer;
+          line-height: 2;
+          font-weight: bold;
+          color: $font-color;
+        }
 
         &:hover {
           &:not(.is-active) {
-            transition: color 0.2s $transition-timing;
-            color: rgba($font-color,.7);
+            label {
+              transition: color 0.1s $transition-timing;
+              color: rgba($font-color,.6);
+            }
           }
         }
 
         &.is-active {
-          position: relative;
-          z-index: 1;
-          margin-left: -2px;
-          margin-right: -2px;
-          margin-top: -2px;
-          background-color: $ec-secondary;
-          border: 2px solid $ec-secondary;
-          border-radius: $border-radius-lg;
-          color: $white;
+          label {
+            position: relative;
+            z-index: 1;
+            margin-left: -2px;
+            margin-right: -2px;
+            margin-top: -2px;
+            height: 42px;
+            background-color: $ec-secondary;
+            border: 2px solid $ec-secondary;
+            border-radius: $border-radius-lg;
+            color: $white;
+          }
         }
 
         &.more {
-          font-weight: normal;
+          display: flex;
+          align-items: center;
+          padding: 0 12.5px;
+          height: 38px;
+          cursor: pointer;
+          line-height: 2;
           color: $link-color;
 
           &:hover {
@@ -350,6 +395,7 @@ body {
       padding: 16px 15px;
       background-color: $ec-gray;
       border-radius: $border-radius-lg;
+      color: $font-color;
 
       li {
         display: flex;
@@ -386,6 +432,7 @@ body {
       background-color: $white;
       border-radius: $border-radius-xl;
       box-shadow: 0 0 25px rgba(0,0,0,.15);
+      color: $font-color;
 
       &.show {
         display: block;
@@ -421,6 +468,7 @@ body {
 
       .heading {
         margin-bottom: 30px;
+        color: $font-color;
       }
 
       .title,
@@ -477,177 +525,6 @@ body {
       }
     }
   }
-}
-
-// Manager
-.easycredit-tx-manager {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  min-width: 250px;
-  max-width: 500px;
-  font-family: $font-family !important;
-  font-size: $font-size-running;
-  color: $font-color;
-
-  &:before {
-    content: '';
-    margin-bottom: 5px;
-    display: block;
-    height: 25px;
-    background-color: transparent;
-    background-image: url(../img/ratenkauf-logo.svg);
-    background-position: left center;
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
-
-  strong,
-  label {
-    font-family: $font-family-bold;
-  }
-  label {
-    display: inline-block;
-    margin-bottom: 5px;
-  }
-
-  p {
-    margin-top: 0;
-    margin-bottom: 0;
-    font-size: $font-size-running;
-  }
-  .transaction-info {
-    p {
-      margin: 1em 0;
-    }
-  }
-
-  .progress-bar {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  select,
-  input,
-  button {
-    display: inline-block;
-    margin-bottom: 10px;
-    padding: 1px 15px 0;
-    width: 100%;
-    max-width: 300px;
-    height: 35px;
-    box-sizing: border-box;
-    line-height: 32px;
-    background-color: transparent;
-    background-image: none;
-    border: 1px solid $ec-gray-border;
-    border-radius: $border-radius;
-    font-family: $font-family !important;
-    font-size: $font-size;
-    color: $font-color;
-  }
-  select {
-    // Reset
-    &#easycredit-merchant-status {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-
-      &::-ms-expand {
-        display: none;
-      }
-    }
-
-    background-image: url(../img/icon-arrow-down.svg);
-    background-position: right 10px center;
-    background-repeat: no-repeat;
-    background-size: 10px;
-    cursor: pointer;
-
-    &:disabled {
-      color: $font-color-disabled;
-    }
-  }
-  input {
-    &::-webkit-inner-spin-button {
-      display: none;
-    }
-    &::-webkit-calendar-picker-indicator {
-      color: transparent;
-      background: transparent;
-      margin-left: 10px;
-      margin-right: -5px;
-      padding: 0;
-      width: 10px;
-      background-image: url(../img/icon-arrow-down.svg);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: 10px;
-      cursor: pointer;
-    }
-
-    &:disabled {
-      color: $font-color-disabled;
-    }
-  }
-  button {
-    margin-bottom: 0;
-    background-color: $ec-secondary;
-    border: 0;
-    border-radius: 20px;
-    text-align: center;
-    font-family: $font-family-bold !important;
-    color: $white;
-    cursor: pointer;
-    transition: $transition;
-
-    &:hover {
-      background-color: darken($ec-secondary,5%);
-    }
-    &:disabled {
-      background-color:$ec-gray;
-    }
-  }
-  .amount {
-    input {
-      width: calc(100% - 35px);
-    }
-  }
-  .loading, &.loading {
-    background-image: url(../img/ratenkauf-icon.svg);
-    background-repeat: no-repeat;
-    background-position: center;
-    animation: 1.4s linear infinite both circle-linear--animation;
-    animation-delay: 0.3s;
-  }
-  .loading p, &.loading div, &.loading:before, &.loading span {
-    visibility:hidden;
-  }
-
-}
-
-// Status Widget
-.easycredit-tx-status-widget {
-  display: inline-block;
-  padding: 0 15px 0 45px;
-  width: auto;
-  height: 35px;
-  vertical-align: middle;
-  border: 0 solid $ec-gray;
-  border-radius: $border-radius;
-  background-color: $ec-gray;
-  background-image: url(../img/ratenkauf-icon.svg);
-  background-position: 15px center;
-  background-repeat: no-repeat;
-  background-size: 25px;
-  font-family: $font-family !important;
-  font-size: $font-size;
-  line-height: 35px;
-  color: $font-color;
-
-  &.loading {
-    animation: 1.4s linear infinite both circle-linear--animation;
-  }
-
 }
 
 // Alerts

@@ -5,13 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>designkonzept2020</title>
+    <title>ratenkauf by easyCredit Checkout</title>
   </head>
   <body>
     <noscript>
-      <strong>We're sorry but designkonzept2020 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>We're sorry but ratenkauf by easyCredit Checkout doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
+
+    <!-- easycredit-checkout amount="420.31" webshop-id="2.de.7387.1" is-active="true" prefix="HERR" / -->
+
+    <easycredit-checkout-label></easycredit-checkout-label>
+    <easycredit-checkout amount="420.31" webshop-id="2.de.7387.1" is-active="true" prefix="HERR"
+     payment-plan="&quot;42 Raten \u00e0 21.50\u20ac (41 x 21.50\u20ac, 1 x 8.17\u20ac)&quot;" 
+    ></easycredit-checkout>
+
   </body>
 </html>
