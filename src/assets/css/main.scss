@@ -1,0 +1,683 @@
+// Variables
+// - Colors
+$ec-primary: #ff6700;
+$ec-primary-dark: #F06100;
+$ec-secondary: #0066b3;
+$ec-blue: #009ee0;
+$ec-gray: #f2f2f2;
+$ec-gray-2: #E5E5E5;
+$ec-gray-border: rgba(0,0,0,0.2);
+$white: #fff;
+$error: #e90202;
+
+// - Font colors
+$font-color: #000;
+$font-color-disabled: rgba($font-color,0.4);
+$link-color: $ec-secondary;
+
+// - Breakpoints
+$breakpoint-sm-down: 767px;
+$breakpoint-sm-up: 768px;
+
+// - Typo
+$font-family: Helvetica, Arial, sans-serif;
+$font-family-bold: Helvetica, Arial, sans-serif;
+
+$font-size-heading: 24px;
+$font-size: 14px;
+$font-size-sm: 13px;
+$font-size-xs: 12px;
+$font-size-running: 13px;
+
+$line-height: 1.4;
+
+// - Border
+$border-radius: 3px;
+$border-radius-lg: 5px;
+$border-radius-xl: 10px;
+
+// - Transitions
+$transition: all 0.15s ease-in-out;
+$transition-timing: cubic-bezier(0.73, 0.32, 0.14, 0.99);
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: $white;
+}
+
+// App
+#app {
+  font-family: $font-family;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: $font-size;
+  line-height: $line-height;
+  -webkit-text-size-adjust: none;
+
+  // Vue demo settings
+  @media (min-width: $breakpoint-sm-up) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  @media (max-width: $breakpoint-sm-down) {
+    padding-bottom: 60px;
+  }
+
+  // Links
+  a {
+    color: $link-color;
+    text-decoration: none;
+    transition: color 0.2s $transition-timing;
+
+    &:hover {
+      color: rgba($link-color,.7);
+    }
+  }
+
+  // Buttons
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: $ec-blue;
+    transition: all 0.1s $transition-timing;
+    cursor: pointer;
+    font-weight: bold;
+    color: $white;
+
+    &.btn-primary {
+      background-color: $ec-primary;
+    }
+
+    &:hover,
+    &:active,
+    &:focus,
+    &:visited {
+      background-color: $ec-secondary;
+      color: $white;
+
+      &.btn-primary {
+        background-color: $ec-primary-dark;
+      }
+    }
+  }
+
+  // Typo
+  h1, h2, h3,
+  .heading {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: $font-size-heading;
+  }
+  small {
+    font-size: $font-size-xs;
+  }
+
+  // Checkout
+  .ec-checkout {
+    padding: 30px 20px;
+    width: 100%;
+
+    @media (min-width: $breakpoint-sm-up) {
+      padding: 30px 25px;
+      max-width: 320px;
+      border-radius: $border-radius-xl;
+      box-shadow: 0 0 25px rgba(0,0,0,.15);
+    }
+
+    @media (max-width: $breakpoint-sm-down) {
+      box-sizing: border-box;
+    }
+
+    .form-radio,
+    .form-check {
+      display: flex;
+
+      label {
+        display: inline-block;
+        margin-top: -.5px;
+        padding-left: 10px;
+        width: 100%;
+        vertical-align: top;
+        cursor: pointer;
+        user-select: none;
+
+        small {
+          font-weight: normal;
+        }
+      }
+
+      label[for='paymentMethod'] {
+        padding-right: 45px;
+        background: transparent url('../img/ratenkauf-icon.svg') right center no-repeat;
+        background-size: 35px;
+        font-weight: bold;
+
+        small {
+          color: rgba($font-color,.5);
+        }
+      }
+
+      &.badges {
+        input {
+          display: none;
+        }
+
+        label {
+          display: inline-block;
+          margin-right: 10px;
+          padding: 7px 25px;
+          width: auto;
+          border-radius: $border-radius-lg;
+          background-color: $ec-gray;
+          transition: all 0.1s $transition-timing;
+          cursor: pointer;
+          text-align: center;
+          font-size: $font-size-sm;
+          font-weight: bold;
+          color: $font-color;
+        }
+        input[type='radio']:checked+label {
+          background-color: $ec-blue;
+          color: $white;
+        }
+      }
+    }
+    .form-submit {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    &__alert {
+      position: relative;
+      margin-top: 20px;
+      margin-bottom: -10px;
+      list-style: none;
+      padding: 16px 15px 16px 64px;
+      background-color: $ec-secondary;
+      border-radius: $border-radius-lg;
+      font-size: $font-size-sm;
+      font-weight: bold;
+      color: $white;
+      hyphens: manual;
+
+      &:before {
+        content: '!';
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 24px;
+        height: 24px;
+        border: 2px solid $white;
+        border-radius: 50%;
+        font-size: 1em * 1.1;
+        line-height: 24px;
+      }
+
+      a {
+        color: $white;
+        text-decoration: underline;
+
+        &:hover,
+        &:active,
+        &:focus,
+        &:visited {
+          text-decoration: none;
+        }
+      }
+    }
+
+    &__body {
+      position: relative;
+
+      &.faded {
+        pointer-events: none;
+        user-select: none;
+
+        &:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 10;
+          display: block;
+          width: 100%;
+          height: 100%;
+          background-color: rgba($white,.7);
+        }
+      }
+    }
+
+    &__instalments {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-width: 0 2px;
+      border-style: solid;
+      border-color: $ec-gray-2;
+      border-radius: $border-radius-lg $border-radius-lg 0 0;
+
+      &.base {
+        margin-top: 20px;
+        border-top-width: 2px;
+      }
+
+      &.extended {
+        max-height: 462px;
+        transition: all .35s ease;
+        border-radius: 0;
+  
+        // Opening
+        &.collapsed {
+          overflow: hidden;
+
+          &:not(.collapsing) {
+            max-height: 0;
+          }
+        }
+        // Closing
+        &.collapsing {
+          &:not(.collapsed) {
+            max-height: 0;
+            overflow: hidden;
+          }
+        }
+      }
+
+      &.actions {
+        margin-bottom: 10px;
+        border-bottom-width: 2px;
+        border-radius: 0 0 $border-radius-lg $border-radius-lg;
+
+        li {
+          &:last-child {
+            border-bottom: 0;
+          }
+        }
+      }
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 15px;
+        height: 40px;
+        border-bottom: 2px solid $ec-gray-2;
+        cursor: pointer;
+        line-height: 40px;
+        font-weight: bold;
+
+        &:hover {
+          &:not(.is-active) {
+            transition: color 0.2s $transition-timing;
+            color: rgba($font-color,.7);
+          }
+        }
+
+        &.is-active {
+          position: relative;
+          z-index: 1;
+          margin-left: -2px;
+          margin-right: -2px;
+          margin-top: -2px;
+          background-color: $ec-secondary;
+          border: 2px solid $ec-secondary;
+          border-radius: $border-radius-lg;
+          color: $white;
+        }
+
+        &.more {
+          font-weight: normal;
+          color: $link-color;
+
+          &:hover {
+            color: rgba($link-color,.7);
+          }
+        }
+      }
+    }
+
+    &__totals {
+      margin-top: 10px;
+      margin-bottom: 20px;
+      list-style: none;
+      padding: 16px 15px;
+      background-color: $ec-gray;
+      border-radius: $border-radius-lg;
+
+      li {
+        display: flex;
+        justify-content: space-between;
+        padding: 2px 0;
+
+        &.total {
+          font-weight: bold;
+        }
+      }
+    }
+
+    &__actions {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    &__small-print {
+      margin-top: 20px;
+      margin-bottom: 0;
+      color: rgba($font-color,.5);
+    }
+
+    &__modal {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: 1001;
+      transform: translate(-50%, -50%);
+      display: none;
+      padding: 50px 30px 30px;
+      width: 100%;
+      max-width: 400px;
+      background-color: $white;
+      border-radius: $border-radius-xl;
+      box-shadow: 0 0 25px rgba(0,0,0,.15);
+
+      &.show {
+        display: block;
+      }
+
+      @media (max-width: $breakpoint-sm-down) {
+        left: 0;
+        top: auto;
+        bottom: 0;
+        transform: none;
+        padding-bottom: 20px;
+        max-width: 100vw;
+        max-height: 100vh;
+        overflow: scroll;
+        border-radius: 0;
+        box-sizing: border-box;
+      }
+
+      .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        display: block;
+        width: 25px;
+        height: 25px;
+        background-color: transparent;
+        background-image: url(../img/icon-close.svg);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 15px;
+        cursor: pointer;
+      }
+
+      .heading {
+        margin-bottom: 30px;
+      }
+
+      .title,
+      .privacy {
+        p {
+          font-size: $font-size-sm;
+        }
+      }
+      .title {
+        margin-bottom: 30px;
+      }
+    }
+    &__modal-backdrop {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 1000;
+      display: none;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,.3);
+
+      &.show {
+        display: block;
+      }
+    }
+
+    &__sandbox {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      z-index: 100;
+      padding: 20px 25px;
+      width: 100%;
+      box-sizing: border-box;
+      white-space: nowrap;
+      overflow: scroll;
+      background-color: $white;
+      box-shadow: 0 0 25px rgba(0,0,0,.15);
+
+      &::-webkit-scrollbar {
+          display: none !important;
+      }
+
+      strong {
+        display: inline-block;
+        margin-right: 15px;
+      }
+
+      a {
+        display: inline-block;
+        margin-right: 15px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+// Manager
+.easycredit-tx-manager {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-width: 250px;
+  max-width: 500px;
+  font-family: $font-family !important;
+  font-size: $font-size-running;
+  color: $font-color;
+
+  &:before {
+    content: '';
+    margin-bottom: 5px;
+    display: block;
+    height: 25px;
+    background-color: transparent;
+    background-image: url(../img/ratenkauf-logo.svg);
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  strong,
+  label {
+    font-family: $font-family-bold;
+  }
+  label {
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: $font-size-running;
+  }
+  .transaction-info {
+    p {
+      margin: 1em 0;
+    }
+  }
+
+  .progress-bar {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  select,
+  input,
+  button {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 1px 15px 0;
+    width: 100%;
+    max-width: 300px;
+    height: 35px;
+    box-sizing: border-box;
+    line-height: 32px;
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid $ec-gray-border;
+    border-radius: $border-radius;
+    font-family: $font-family !important;
+    font-size: $font-size;
+    color: $font-color;
+  }
+  select {
+    // Reset
+    &#easycredit-merchant-status {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+
+      &::-ms-expand {
+        display: none;
+      }
+    }
+
+    background-image: url(../img/icon-arrow-down.svg);
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+    background-size: 10px;
+    cursor: pointer;
+
+    &:disabled {
+      color: $font-color-disabled;
+    }
+  }
+  input {
+    &::-webkit-inner-spin-button {
+      display: none;
+    }
+    &::-webkit-calendar-picker-indicator {
+      color: transparent;
+      background: transparent;
+      margin-left: 10px;
+      margin-right: -5px;
+      padding: 0;
+      width: 10px;
+      background-image: url(../img/icon-arrow-down.svg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 10px;
+      cursor: pointer;
+    }
+
+    &:disabled {
+      color: $font-color-disabled;
+    }
+  }
+  button {
+    margin-bottom: 0;
+    background-color: $ec-secondary;
+    border: 0;
+    border-radius: 20px;
+    text-align: center;
+    font-family: $font-family-bold !important;
+    color: $white;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+      background-color: darken($ec-secondary,5%);
+    }
+    &:disabled {
+      background-color:$ec-gray;
+    }
+  }
+  .amount {
+    input {
+      width: calc(100% - 35px);
+    }
+  }
+  .loading, &.loading {
+    background-image: url(../img/ratenkauf-icon.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: 1.4s linear infinite both circle-linear--animation;
+    animation-delay: 0.3s;
+  }
+  .loading p, &.loading div, &.loading:before, &.loading span {
+    visibility:hidden;
+  }
+
+}
+
+// Status Widget
+.easycredit-tx-status-widget {
+  display: inline-block;
+  padding: 0 15px 0 45px;
+  width: auto;
+  height: 35px;
+  vertical-align: middle;
+  border: 0 solid $ec-gray;
+  border-radius: $border-radius;
+  background-color: $ec-gray;
+  background-image: url(../img/ratenkauf-icon.svg);
+  background-position: 15px center;
+  background-repeat: no-repeat;
+  background-size: 25px;
+  font-family: $font-family !important;
+  font-size: $font-size;
+  line-height: 35px;
+  color: $font-color;
+
+  &.loading {
+    animation: 1.4s linear infinite both circle-linear--animation;
+  }
+
+}
+
+// Alerts
+.easycredit-tx-alert {
+  display: block;
+  margin: 10px 0;
+  padding: 10px 15px;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+  background-color: $ec-secondary;
+  border-radius: $border-radius;
+  font-family: $font-family !important;
+  font-size: $font-size;
+  color: $white;
+
+  &.error {
+    background-color: $error;
+  }
+  &.success {
+    background-color: #8dd600;
+  }
+}
+
+@keyframes circle-linear--animation {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
