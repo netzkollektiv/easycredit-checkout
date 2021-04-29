@@ -214,9 +214,7 @@ export default {
     },
     toggleModal () {
       this.modal.show = !this.modal.show
-      if (!this.modal.show) {
-        this.modal.button.isDisabled = true
-      }
+      this.modal.button.isDisabled = !this.modal.show;
     },
     prevent () {
       return null
