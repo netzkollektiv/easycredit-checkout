@@ -300,24 +300,13 @@ easycredit-checkout {
       }
 
       &.extended {
-        max-height: 462px;
         transition: all .35s ease;
         border-radius: 0;
+        max-height: 0;
+        overflow:hidden;
 
-        // Opening
         &.collapsed {
-          overflow: hidden;
-
-          &:not(.collapsing) {
-            max-height: 0;
-          }
-        }
-        // Closing
-        &.collapsing {
-          &:not(.collapsed) {
-            max-height: 0;
-            overflow: hidden;
-          }
+          max-height: 462px;
         }
       }
 

@@ -4,7 +4,7 @@
     :class="instalmentClasses"
   >
     <label :for="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten">
-      <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate | formatCurrency }} € / Monat</span>
+      <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate|formatCurrency }} € / Monat</span>
     </label>
     <input 
       type="radio" 
@@ -42,7 +42,7 @@ export default {
   },
   filters: {
     formatCurrency (value) {
-      return value.replace('.', ',');
+      return (value) ? value.replace('.', ',') : '';
     }
   },
   computed: {

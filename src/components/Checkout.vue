@@ -49,11 +49,11 @@
         <ul class="ec-checkout__totals">
           <li>
             <span>Zinsen</span>
-            <span>{{ totals.interest | formatCurrency }} €</span>
+            <span>{{ totals.interest|formatCurrency }} €</span>
           </li>
           <li class="total">
             <span>Gesamtbetrag</span>
-            <span>{{ totals.total | formatCurrency }} €</span>
+            <span>{{ totals.total|formatCurrency }} €</span>
           </li>
         </ul>
 
@@ -168,8 +168,7 @@ export default {
       list: {
         rows: 5,
         selected: null,
-        collapsed: true,
-        collapsing: false,
+        collapsed: false,
         button: 'Weitere Raten anzeigen +'
       },
       totals: {
@@ -206,9 +205,7 @@ export default {
       this.modal.button.isDisabled = false
     },
     toggleList () {
-      this.list.collapsing = !this.list.collapsing
-      setTimeout(() => this.list.collapsing = !this.list.collapsing, 350)
-      setTimeout(() => this.list.collapsed = !this.list.collapsed, 350)
+      this.list.collapsed = !this.list.collapsed
       this.list.button = !this.list.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -'
 
       if ( this.list.selected >= this.list.rows ) {
@@ -261,7 +258,7 @@ export default {
   },
   filters: {
     formatCurrency (value) {
-      return value.replace('.', ',');
+      return (value) ? value.replace('.', ',') : '';
     }
   },
   computed: {
@@ -278,7 +275,6 @@ export default {
     },
     listClasses () {
       return {
-        'collapsing': this.list.collapsing,
         'collapsed': this.list.collapsed
       }
     },
