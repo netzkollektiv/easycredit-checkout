@@ -1,10 +1,11 @@
 <template>
   <div class="ec-checkout" v-if="isActive">
-    <div class="ec-payment-plan" v-if="!paymentPlan">
+    <div class="ec-payment-plan" v-if="getPaymentPlan">
       <strong>Ihre Auswahl</strong><br />
-      {{ JSON.parse(paymentPlan) }}
+      {{ getPaymentPlan }}
     </div>
-    <div class="ec-checkout-wrapper" v-if="paymentPlan">
+
+    <div class="ec-checkout-wrapper" v-if="!getPaymentPlan">
       <div
         class="ec-checkout__alert"
         v-if="alert"
@@ -79,7 +80,7 @@
           class="close"
         ></div>
         <h3 class="heading">{{ modal.heading }}</h3>
-        <div class="title">
+        <div class="title" v-if="askForPrefix">
           <p><strong>{{ modal.prefix.msg }}</strong></p>
           <div class="form-radio badges">
             <span  v-for="(label, key) in modal.prefix.options" v-bind:key="key">
@@ -155,7 +156,11 @@ export default {
     alert: String,
     paymentPlan: {
       type: String,
-      default: null
+      default: ''
+    },
+    askForPrefix: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -198,6 +203,49 @@ export default {
       }
     }
   },
+  computed: {
+    bodyClasses () {
+      return {
+        'faded': this.alert
+      }
+    },
+    listBase () {
+      return this.instalments.slice(0, this.list.rows)
+    },
+    listExtended () {
+      return this.instalments.slice(this.list.rows)
+    },
+    listClasses () {
+      return {
+        'collapsed': this.list.collapsed
+      }
+    },
+    modalClasses () {
+      return {
+        'show': this.modal.show
+      }
+    },
+    getPaymentPlan () {
+      if (this.alert) {
+        return false
+      }
+
+      try {
+        if (this.paymentPlan) {
+          return JSON.parse(this.paymentPlan)
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      return false
+    },
+    submitDisabled () {
+      return this.modal.button.isDisabled || 
+        !this.modal.agreement.checked ||
+        !this.isPrefixValid()
+    }
+  },
   methods: {
     onSubmit (...args) {
       this.modal.button.isDisabled = true
@@ -214,15 +262,13 @@ export default {
     },
     toggleModal () {
       this.modal.show = !this.modal.show
-      if (!this.modal.show) {
-        this.modal.button.isDisabled = true
-      }
+      this.modal.button.isDisabled = !this.modal.show;
     },
     prevent () {
       return null
     },
     isPrefixValid () {
-      return Object.keys(this.modal.prefix.options)
+      return !this.askForPrefix || Object.keys(this.modal.prefix.options)
         .indexOf(this.modal.prefix.value) >= 0
     },
     getInstalments () {
@@ -251,9 +297,6 @@ export default {
           console.log(e)
           this.alert = 'Es ist ein Fehler aufgetreten.'
         })
-    },
-    prefixValid() {
-      this.prefix
     }
   },
   filters: {
@@ -261,36 +304,11 @@ export default {
       return (value) ? value.replace('.', ',') : '';
     }
   },
-  computed: {
-    bodyClasses () {
-      return {
-        'faded': this.alert
-      }
-    },
-    listBase () {
-      return this.instalments.slice(0, this.list.rows)
-    },
-    listExtended () {
-      return this.instalments.slice(this.list.rows)
-    },
-    listClasses () {
-      return {
-        'collapsed': this.list.collapsed
-      }
-    },
-    modalClasses () {
-      return {
-        'show': this.modal.show
-      }
-    },
-    submitDisabled () {
-      return this.modal.button.isDisabled || 
-        !this.modal.agreement.checked ||
-        !this.isPrefixValid()
-    }
-  },
   async mounted () {
     bus.$on('instalmentToggled', (data) => {
+      if (this.instalments.length == 0) {
+        return;
+      }
       this.list.selected = data
       this.totals.interest = this.instalments[data].zinsen.anfallendeZinsen
       this.totals.total = this.instalments[data].gesamtsumme

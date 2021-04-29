@@ -15,8 +15,8 @@ module.exports = {
     config => {
       config.optimization.delete('splitChunks')
     },
-  devServer: {
-      host: 'docker03.netzkollektiv.com',
-      port: '8080'
-  },
+//  devServer: {
+//      host: 'docker03.netzkollektiv.com',
+//      port: '8080'
+//  },
 }

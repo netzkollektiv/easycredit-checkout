@@ -14,10 +14,61 @@
 
     <!-- easycredit-checkout amount="420.31" webshop-id="2.de.7387.1" is-active="true" prefix="HERR" / -->
 
-    <easycredit-checkout-label></easycredit-checkout-label>
-    <easycredit-checkout amount="420.31" webshop-id="2.de.7387.1" is-active="true" prefix="HERR"
-     payment-plan="&quot;42 Raten \u00e0 21.50\u20ac (41 x 21.50\u20ac, 1 x 8.17\u20ac)&quot;" 
-    ></easycredit-checkout>
+    <div>
+      <h2>Fehler</h2>
 
+      <easycredit-checkout-label></easycredit-checkout-label>
+      <easycredit-checkout 
+        webshop-id="2.de.7387.1" 
+        amount="420.31" 
+        is-active="true" 
+        alert="Es ist ein Fehler aufgetreten."
+        payment-plan="&quot;42 Raten \u00e0 21.50\u20ac (41 x 21.50\u20ac, 1 x 8.17\u20ac)&quot;" 
+      ></easycredit-checkout>
+    </div>
+
+    <div>
+      <h2>berechnet</h2>
+
+      <easycredit-checkout-label></easycredit-checkout-label>
+      <easycredit-checkout 
+        webshop-id="2.de.7387.1" 
+        amount="420.31" 
+        is-active="true" 
+        payment-plan="&quot;42 Raten \u00e0 21.50\u20ac (41 x 21.50\u20ac, 1 x 8.17\u20ac)&quot;" 
+      ></easycredit-checkout>
+    </div>
+
+
+    <div>
+      <h2>unberechnet, Prefix Abfrage</h2>
+
+      <easycredit-checkout-label></easycredit-checkout-label>
+      <easycredit-checkout 
+        webshop-id="2.de.7387.1" 
+        amount="420.31" 
+        is-active="true" 
+        prefix="HERR" 
+        ask-for-prefix="true"
+      />
+
+    </div>
+
+    <div>
+      <h2>unberechnet, keine Prefix Abfrage</h2>
+
+      <easycredit-checkout-label></easycredit-checkout-label>
+      <easycredit-checkout 
+        webshop-id="2.de.7387.1" 
+        amount="420.31" 
+        is-active="true" 
+        prefix="HERR" 
+      />
+
+    </div>
+
+    <style>
+      h2 { font-family: sans-serif; display:block; text-decoration: underline; }
+    </style>
   </body>
 </html>
