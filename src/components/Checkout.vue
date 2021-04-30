@@ -29,6 +29,7 @@
         <ul
           class="ec-checkout__instalments extended"
           :class="listClasses"
+          :style="{ 'max-height': listExtendedMaxHeight }"
         >
           <instalment
             v-for="(item, index) in listExtended"
@@ -173,7 +174,8 @@ export default {
       list: {
         rows: 5,
         selected: null,
-        collapsed: false,
+        collapsed: true,
+        collapsing: false,
         button: 'Weitere Raten anzeigen +'
       },
       totals: {
@@ -215,8 +217,13 @@ export default {
     listExtended () {
       return this.instalments.slice(this.list.rows)
     },
+    listExtendedMaxHeight () {
+      var maxHeight = ((this.instalments.length - this.list.rows) * 40) + 2;
+      return maxHeight + 'px';
+    },
     listClasses () {
       return {
+        'collapsing': this.list.collapsing,
         'collapsed': this.list.collapsed
       }
     },
@@ -253,8 +260,10 @@ export default {
       this.modal.button.isDisabled = false
     },
     toggleList () {
-      this.list.collapsed = !this.list.collapsed
-      this.list.button = !this.list.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -'
+      this.list.collapsing = !this.list.collapsing;
+      setTimeout(() => this.list.collapsing = !this.list.collapsing, 350);
+      setTimeout(() => this.list.collapsed = !this.list.collapsed, 350);
+      this.list.button = !this.list.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -';
 
       if ( this.list.selected >= this.list.rows ) {
         bus.$emit('instalmentToggleReset')

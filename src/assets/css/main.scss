@@ -301,11 +301,19 @@ easycredit-checkout {
       &.extended {
         transition: all .35s ease;
         border-radius: 0;
-        max-height: 0;
-        overflow:hidden;
 
-        &.collapsed {
-          max-height: 462px;
+        &.collapsing {
+          height: auto !important;
+        }
+
+        &.collapsed,
+        &.collapsing {
+          overflow: hidden;
+        }
+
+        &.collapsed:not(.collapsing),
+        &.collapsing:not(.collapsed) {
+          max-height: 0 !important;
         }
       }
 
