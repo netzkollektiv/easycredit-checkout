@@ -6,6 +6,7 @@
       :id="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten" 
       :value="instalment.zahlungsplan.anzahlRaten" 
       v-model="selectedInstalment"
+      @change.stop=""
     />
     <label :for="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten">
       <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate|formatCurrency }} € / Monat</span>
