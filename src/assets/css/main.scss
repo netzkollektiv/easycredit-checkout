@@ -329,6 +329,17 @@ easycredit-checkout {
         }
       }
 
+      &.payment-plan {
+        margin-top: 5px;
+        border-top-width: 2px;
+        border-radius: $border-radius-lg;
+        margin-bottom: 10px;
+
+        label {
+          cursor: default;
+        }
+      }
+
       li {
         label {
           display: flex;
@@ -345,27 +356,26 @@ easycredit-checkout {
         }
 
         &:hover {
-          &:not(.is-active) {
-            label {
-              transition: color 0.1s $transition-timing;
-              color: rgba($font-color,.6);
-            }
+          input:not(:checked) + label/*,
+          &:not(.is-active) label*/ {
+            transition: color 0.1s $transition-timing;
+            color: rgba($font-color,.6);
           }
         }
 
-        &.is-active {
-          label {
-            position: relative;
-            z-index: 1;
-            margin-left: -2px;
-            margin-right: -2px;
-            margin-top: -2px;
-            height: 42px;
-            background-color: $ec-secondary;
-            border: 2px solid $ec-secondary;
-            border-radius: $border-radius-lg;
-            color: $white;
-          }
+        input:checked + label,
+        &.is-selected label/*,
+        &.is-active label*/ {
+          position: relative;
+          z-index: 1;
+          margin-left: -2px;
+          margin-right: -2px;
+          margin-top: -2px;
+          height: 42px;
+          background-color: $ec-secondary;
+          border: 2px solid $ec-secondary;
+          border-radius: $border-radius-lg;
+          color: $white;
         }
 
         &.more {
@@ -413,6 +423,16 @@ easycredit-checkout {
       margin-top: 20px;
       margin-bottom: 0;
       color: rgba($font-color,.5);
+    }
+
+    .ec-payment-plan {
+      strong {
+        color: $font-color;
+      }
+
+      .ec-checkout__small-print {
+        margin-top: 10px;
+      }
     }
 
     &__modal {

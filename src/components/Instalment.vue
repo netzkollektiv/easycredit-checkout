@@ -1,17 +1,16 @@
 <template>
-  <li
-    v-on:click.prevent="toggleInstalment"
-    :class="instalmentClasses"
-  >
+  <li>
+    <input 
+      type="radio" 
+      name="easycredit-duration" 
+      :id="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten" 
+      :value="instalment.zahlungsplan.anzahlRaten" 
+      v-on:change.stop="toggleInstalment"
+      v-on:click.stop=""
+    />
     <label :for="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten">
       <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate|formatCurrency }} € / Monat</span>
     </label>
-    <input 
-      type="radio" 
-      name="easycredit-instalment" 
-      :id="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten" 
-      :value="instalment.zahlungsplan.anzahlRaten" 
-    />
   </li>
 </template>
 
@@ -21,46 +20,15 @@ import {bus} from '../main.js'
 export default {
   name: 'Instalment',
   props: ['index', 'instalment'],
-  data () {
-    return {
-      isActive: false
-    }
-  },
   methods: {
     toggleInstalment: function () {
-      this.isActive = true;
       bus.$emit('instalmentToggled', this.index);
-    },
-    instalmentToggled: function () {
-      this.isActive = false;
-    },
-    instalmentToggleIfFirst: function () {
-      if ( this.index === 0 ) {
-        this.toggleInstalment();
-      }
     }
   },
   filters: {
     formatCurrency (value) {
       return (value) ? value.replace('.', ',') : '';
     }
-  },
-  computed: {
-    instalmentClasses: function () {
-      return {
-        'is-active': this.isActive
-      };
-    }
-  },
-  mounted () {
-    this.instalmentToggleIfFirst();
-
-    bus.$on('instalmentToggled', (data) => {
-      if ( this.index !== data ) {
-        this.instalmentToggled();
-      }
-    });
-    bus.$on('instalmentToggleReset', () => this.instalmentToggleIfFirst());
   }
 }
 </script>
