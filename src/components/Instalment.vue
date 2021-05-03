@@ -5,8 +5,7 @@
       name="easycredit-duration" 
       :id="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten" 
       :value="instalment.zahlungsplan.anzahlRaten" 
-      v-on:change.stop="toggleInstalment"
-      v-on:click.stop=""
+      v-model="selectedInstalment"
     />
     <label :for="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten">
       <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate|formatCurrency }} € / Monat</span>
@@ -15,15 +14,19 @@
 </template>
 
 <script>
-import {bus} from '../main.js'
-
 export default {
   name: 'Instalment',
-  props: ['index', 'instalment'],
-  methods: {
-    toggleInstalment: function () {
-      bus.$emit('instalmentToggled', this.index);
+  props: {
+    instalment: Object,
+    value: {
+        type: Number
     }
+  },
+  computed: {
+      selectedInstalment: {
+          get() {return this.value},
+          set(instalment) { this.$emit('input', instalment) }
+      }
   },
   filters: {
     formatCurrency (value) {

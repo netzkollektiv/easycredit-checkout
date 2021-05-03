@@ -30,7 +30,7 @@
         :class="bodyClasses"
         v-if="!alert"
       >
-        <installments >
+        <instalments :instalments="instalments" v-model="selectedInstalment" />
 
         <ul class="ec-checkout__totals">
           <li>
@@ -102,28 +102,11 @@
         :class="modalClasses"
       ></div>
     </div>
-
-    <!-- div class="ec-checkout__sandbox">
-      <strong>Ansicht wählen:</strong>
-      <a
-        @click="clearAlert"
-      >Standard</a>
-      <a
-        @click="setAlert('b2c')"
-      >Geschäftskunde</a>
-      <a
-        @click="setAlert('address')"
-      >abweichende Adressen</a>
-      <a
-        @click="setAlert('total')"
-      >Bestellsumme unzulässig</a>
-    </div -->
   </div>
 </template>
 
 <script>
 import Instalments from './Instalments.vue'
-import {bus} from '../main.js'
 import fetchJsonp from 'fetch-jsonp'
 
 export default {
@@ -155,6 +138,7 @@ export default {
       example: null,
       button: 'Weiter zum Ratenkauf',
       instalments: [],
+      selectedInstalment: null,
       totals: {
         interest: null,
         total: null
@@ -214,6 +198,13 @@ export default {
         !this.isPrefixValid()
     }
   },
+  watch: {
+    selectedInstalment(value) {
+      var instalment = this.instalments.find((item)=> item.zahlungsplan.anzahlRaten == value)
+      this.totals.interest = instalment.zinsen.anfallendeZinsen
+      this.totals.total = instalment.gesamtsumme
+    }
+  },
   methods: {
     onSubmit (...args) {
       this.modal.button.isDisabled = true
@@ -229,23 +220,19 @@ export default {
         .indexOf(this.modal.prefix.value) >= 0
     },
     getInstalments () {
-      fetchJsonp('//ratenkauf.easycredit.de/ratenkauf-ws/rest/v2/modellrechnung/durchfuehren?webshopId=' + this.webshopId + '&finanzierungsbetrag=' + this.amount)
+      return fetchJsonp('//ratenkauf.easycredit.de/ratenkauf-ws/rest/v2/modellrechnung/durchfuehren?webshopId=' + this.webshopId + '&finanzierungsbetrag=' + this.amount)
         .then((response) => {
           return response.json()
         }).then((json) => {
           this.instalments = json.ergebnis.reverse()
           this.example = json.repraesentativesBeispiel
 
-          if (this.instalments.length > 0) {
-            this.totals.interest = this.instalments[0].zinsen.anfallendeZinsen
-            this.totals.total = this.instalments[0].gesamtsumme
-          }
         }).catch(() => {
           this.alert = 'Die Bestellsumme liegt außerhalb der zulässigen Beträge (200&nbsp;-&nbsp;10.000&nbsp;€).'
         })
     },
     getAgreement () {
-      fetchJsonp('//ratenkauf.easycredit.de/ratenkauf-ws/rest/v2/texte/zustimmung/' + this.webshopId)
+      return fetchJsonp('//ratenkauf.easycredit.de/ratenkauf-ws/rest/v2/texte/zustimmung/' + this.webshopId)
         .then((response) => {
           return response.json()
         }).then((json) => {
@@ -262,8 +249,9 @@ export default {
     }
   },
   async mounted () {
-    if (!this.alert && !this.paymentPlan) {
+    if (this.amount > 0 && !this.alert && !this.paymentPlan) {
       await this.getInstalments(this.amount)
+      this.selectedInstalment = this.instalments.find(()=> true).zahlungsplan.anzahlRaten
       await this.getAgreement()
     }
   }

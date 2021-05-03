@@ -2,11 +2,11 @@
     <div>
         <ul class="ec-checkout__instalments base">
             <instalment
-            v-for="(item, index) in listBase"
-            :index="index"
-            :instalment="item"
-            :key="item.anzahlRaten"
-            v-model="selected"
+              v-for="(item, index) in listBase"
+              :index="index"
+              :instalment="item"
+              :key="item.anzahlRaten"
+              v-model="selectedInstalment"
             />
         </ul>
         <ul
@@ -15,11 +15,11 @@
             :style="{ 'max-height': listExtendedMaxHeight }"
         >
             <instalment
-            v-for="(item, index) in listExtended"
-            :index="rows + index"
-            :instalment="item"
-            :key="item.anzahlRaten"
-            v-model="selected"
+              v-for="(item, index) in listExtended"
+              :index="rows + index"
+              :instalment="item"
+              :key="item.anzahlRaten"
+              v-model="selectedInstalment"
             />
         </ul>
         <ul class="ec-checkout__instalments actions">
@@ -31,7 +31,7 @@
               {{ button }}
             </li>
         </ul>
-    <div>
+    </div>
 </template>
 
 <script>
@@ -41,7 +41,17 @@ export default {
   components: {
     Instalment
   },
-  props: ['instalments'],
+  props: {
+    instalments: Array,
+    value: {
+      type: Number
+    }
+  },
+  watch: {
+    value() {
+      this.$emit('input', this.value);
+    }
+  },
   data () {
     return {
       rows: 5,
@@ -67,7 +77,11 @@ export default {
         'collapsing': this.collapsing,
         'collapsed': this.collapsed
       }
-    },        
+    },
+    selectedInstalment: {
+        get() { return this.value },
+        set(instalment) {this.$emit('input', instalment)}
+    }
   },
   methods: {
     toggleList () {
@@ -76,8 +90,9 @@ export default {
       setTimeout(() => this.collapsed = !this.collapsed, 350);
       this.button = !this.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -';
 
-      if ( this.selectedIndex >= this.rows ) {
-        //bus.$emit('instalmentToggleReset')
+      
+      if ( this.instalments.findIndex((item)=> item.zahlungsplan.anzahlRaten == this.selectedInstalment) >= this.rows ) {
+        this.selectedInstalment = this.instalments.find(()=>true).zahlungsplan.anzahlRaten
       }
     }    
   },
