@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <CheckoutLabel/>
-    <Checkout/>
+    <CheckoutLabel />
+    <Checkout />
   </div>
 </template>
 
@@ -10,7 +10,7 @@ import CheckoutLabel from './components/CheckoutLabel.vue'
 import Checkout from './components/Checkout.vue'
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     CheckoutLabel,
     Checkout

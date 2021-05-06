@@ -1,37 +1,37 @@
 <template>
-    <div>
-        <ul class="ec-checkout__instalments base">
-            <instalment
-              v-for="(item, index) in listBase"
-              :index="index"
-              :instalment="item"
-              :key="item.anzahlRaten"
-              v-model="selectedInstalment"
-            />
-        </ul>
-        <ul
-            class="ec-checkout__instalments extended"
-            :class="listClasses"
-            :style="{ 'max-height': listExtendedMaxHeight }"
-        >
-            <instalment
-              v-for="(item, index) in listExtended"
-              :index="rows + index"
-              :instalment="item"
-              :key="item.anzahlRaten"
-              v-model="selectedInstalment"
-            />
-        </ul>
-        <ul class="ec-checkout__instalments actions">
-            <li
-            @click="toggleList"
-            class="more"
-            :class="listClasses"
-            >
-              {{ button }}
-            </li>
-        </ul>
-    </div>
+  <div>
+    <ul class="ec-checkout__instalments base">
+      <instalment
+        v-for="(item, index) in listBase"
+        :key="item.anzahlRaten"
+        v-model="selectedInstalment"
+        :index="index"
+        :instalment="item"
+      />
+    </ul>
+    <ul
+      class="ec-checkout__instalments extended"
+      :class="listClasses"
+      :style="{ 'max-height': listExtendedMaxHeight }"
+    >
+      <instalment
+        v-for="(item, index) in listExtended"
+        :key="item.anzahlRaten"
+        v-model="selectedInstalment"
+        :index="rows + index"
+        :instalment="item"
+      />
+    </ul>
+    <ul class="ec-checkout__instalments actions">
+      <li
+        class="more"
+        :class="listClasses"
+        @click="toggleList"
+      >
+        {{ button }}
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -43,14 +43,7 @@ export default {
   },
   props: {
     instalments: Array,
-    value: {
-      type: Number
-    }
-  },
-  watch: {
-    value() {
-      this.$emit('input', this.value);
-    }
+    value: Number
   },
   data () {
     return {
@@ -83,18 +76,10 @@ export default {
         set(instalment) {this.$emit('input', instalment)}
     }
   },
-  methods: {
-    toggleList () {
-      this.collapsing = !this.collapsing;
-      setTimeout(() => this.collapsing = !this.collapsing, 350);
-      setTimeout(() => this.collapsed = !this.collapsed, 350);
-      this.button = !this.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -';
-
-      
-      if ( this.instalments.findIndex((item)=> item.zahlungsplan.anzahlRaten == this.selectedInstalment) >= this.rows ) {
-        this.selectedInstalment = this.instalments.find(()=>true).zahlungsplan.anzahlRaten
-      }
-    }    
+  watch: {
+    value() {
+      this.$emit('input', this.value);
+    }
   },
   mounted () {
     /*
@@ -107,6 +92,19 @@ export default {
       this.totals.total = this.instalments[index].gesamtsumme
     })
     */
+  },
+  methods: {
+    toggleList () {
+      this.collapsing = !this.collapsing;
+      setTimeout(() => this.collapsing = !this.collapsing, 350);
+      setTimeout(() => this.collapsed = !this.collapsed, 350);
+      this.button = !this.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -';
+
+      
+      if ( this.instalments.findIndex((item)=> item.zahlungsplan.anzahlRaten == this.selectedInstalment) >= this.rows ) {
+        this.selectedInstalment = this.instalments.find(()=>true).zahlungsplan.anzahlRaten
+      }
+    }    
   }
 }
 </script>

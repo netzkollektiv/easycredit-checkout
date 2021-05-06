@@ -1,15 +1,15 @@
 <template>
   <li>
     <input 
+      :id="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten" 
+      v-model="selectedInstalment" 
       type="radio" 
       name="easycredit-duration" 
-      :id="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten" 
-      :value="instalment.zahlungsplan.anzahlRaten" 
-      v-model="selectedInstalment"
+      :value="instalment.zahlungsplan.anzahlRaten"
       @change.stop=""
-    />
+    >
     <label :for="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten">
-      <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate|formatCurrency }} € / Monat</span>
+      <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate|formatCurrency }} / Monat</span>
     </label>
   </li>
 </template>
@@ -17,22 +17,20 @@
 <script>
 export default {
   name: 'Instalment',
+  filters: {
+    formatCurrency (value) {
+      return (value) ? String(value).replace(new RegExp('\\.', 'g'), ',') + '  €' : '';
+    }
+  },
   props: {
     instalment: Object,
-    value: {
-        type: Number
-    }
+    value: Number
   },
   computed: {
       selectedInstalment: {
           get() {return this.value},
           set(instalment) { this.$emit('input', instalment) }
       }
-  },
-  filters: {
-    formatCurrency (value) {
-      return (value) ? value.replace('.', ',') : '';
-    }
   }
 }
 </script>

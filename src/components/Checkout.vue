@@ -1,6 +1,13 @@
 <template>
-  <div class="ec-checkout" v-if="isActive">
-    <div class="ec-payment-plan" v-if="getPaymentPlan">
+  <div class="ec-checkout-container">
+  <div
+    v-if="isActive"
+    class="ec-checkout"
+  >
+    <div
+      v-if="getPaymentPlan"
+      class="ec-payment-plan"
+    >
       <strong>Ihre Auswahl:</strong>
       <ul class="ec-checkout__instalments payment-plan">
         <li class="is-selected">
@@ -17,20 +24,25 @@
       </p>
     </div>
 
-    <div class="ec-checkout-wrapper" v-if="!getPaymentPlan">
+    <div
+      v-if="!getPaymentPlan"
+      class="ec-checkout-wrapper"
+    >
       <div
-        class="ec-checkout__alert"
         v-if="alert"
+        class="ec-checkout__alert"
         v-html="alert"
-      >
-      </div>
+      />
 
       <div
+        v-if="!alert"
         class="ec-checkout__body"
         :class="bodyClasses"
-        v-if="!alert"
       >
-        <instalments :instalments="instalments" v-model="selectedInstalment" />
+        <instalments
+          v-model="selectedInstalment"
+          :instalments="instalments"
+        />
 
         <ul class="ec-checkout__totals">
           <li>
@@ -46,9 +58,11 @@
         <div class="ec-checkout__actions form-submit">
           <button
             type="button"
-            v-on:click.stop="toggleModal"
             class="btn btn-primary"
-          >{{ button }}</button>
+            @click.stop="toggleModal"
+          >
+            {{ button }}
+          </button>
         </div>
 
         <p class="ec-checkout__small-print">
@@ -61,23 +75,35 @@
         :class="modalClasses"
       >
         <div
-          @click="toggleModal"
           class="close"
-        ></div>
-        <h3 class="heading">{{ modal.heading }}</h3>
-        <div class="title" v-if="askForPrefix">
+          @click="toggleModal"
+        />
+        <h3 class="heading">
+          {{ modal.heading }}
+        </h3>
+        <div
+          v-if="askForPrefix"
+          class="title"
+        >
           <p><strong>{{ modal.prefix.msg }}</strong></p>
           <div class="form-radio badges">
-            <span  v-for="(label, key) in modal.prefix.options" v-bind:key="key">
-              <input class="form-check-input"
-                  type="radio"
-                  name="easycredit-prefix"
-                  :id="'modalPrefix' + key"
-                  v-on:change.stop=""
-                  v-model="modal.prefix.value"
-                  v-bind:value="key"
-                  />
-              <label class="form-check-label" :for="'modalPrefix' + key">
+            <span
+              v-for="(label, key) in modal.prefix.options"
+              :key="key"
+            >
+              <input
+                :id="'modalPrefix' + key"
+                v-model="modal.prefix.value"
+                class="form-check-input"
+                type="radio"
+                name="easycredit-prefix"
+                :value="key"
+                @change.stop=""
+              >
+              <label
+                class="form-check-label"
+                :for="'modalPrefix' + key"
+              >
                 {{ label }}
               </label>
             </span>
@@ -86,22 +112,41 @@
         <div class="privacy">
           <p><strong>{{ modal.agreement.msg }}</strong></p>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="easycredit-agreement" id="modalAgreement" value="1" v-model="modal.agreement.checked" v-on:change.stop="">
-            <label class="form-check-label" for="modalAgreement">
+            <input
+              id="modalAgreement"
+              v-model="modal.agreement.checked"
+              class="form-check-input"
+              type="checkbox"
+              name="easycredit-agreement"
+              value="1"
+              @change.stop=""
+            >
+            <label
+              class="form-check-label"
+              for="modalAgreement"
+            >
               <small>{{ modal.agreement.label }}</small>
             </label>
           </div>
         </div>
         <div class="form-submit">
-          <button class="btn btn-primary" type="button" @click="onSubmit" :disabled="submitDisabled">{{ modal.button.label }}</button>
+          <button
+            class="btn btn-primary"
+            type="button"
+            :disabled="submitDisabled"
+            @click="onSubmit"
+          >
+            {{ modal.button.label }}
+          </button>
         </div>
       </div>
       <div
-        @click="toggleModal"
         class="ec-checkout__modal-backdrop"
         :class="modalClasses"
-      ></div>
+        @click="toggleModal"
+      />
     </div>
+  </div>
   </div>
 </template>
 
@@ -113,6 +158,11 @@ export default {
   name: 'Checkout',
   components: {
     Instalments
+  },
+  filters: {
+    formatCurrency (value) {
+      return (value) ? String(value).replace(new RegExp('\\.', 'g'), ',') + '  €' : '';
+    }
   },
   props: {
     isActive: { 
@@ -187,7 +237,7 @@ export default {
           return JSON.parse(this.paymentPlan)
         }
       } catch (e) {
-        console.error(e);
+        // continue regardless of error
       }
 
       return false
@@ -203,6 +253,13 @@ export default {
       var instalment = this.instalments.find((item)=> item.zahlungsplan.anzahlRaten == value)
       this.totals.interest = instalment.zinsen.anfallendeZinsen
       this.totals.total = instalment.gesamtsumme
+    }
+  },
+  async mounted () {
+    if (this.amount > 0 && !this.alert && !this.paymentPlan) {
+      await this.getInstalments(this.amount)
+      this.selectedInstalment = this.instalments.find(()=> true).zahlungsplan.anzahlRaten
+      await this.getAgreement()
     }
   },
   methods: {
@@ -237,27 +294,15 @@ export default {
           return response.json()
         }).then((json) => {
           this.modal.agreement.label = json.zustimmungDatenuebertragungPaymentPage
-        }).catch((e) => {
-          console.log(e)
+        }).catch(() => {
           this.alert = 'Es ist ein Fehler aufgetreten.'
         })
-    }
-  },
-  filters: {
-    formatCurrency (value) {
-      return (value) ? value.replaceAll('.', ',') + '  €' : '';
-    }
-  },
-  async mounted () {
-    if (this.amount > 0 && !this.alert && !this.paymentPlan) {
-      await this.getInstalments(this.amount)
-      this.selectedInstalment = this.instalments.find(()=> true).zahlungsplan.anzahlRaten
-      await this.getAgreement()
     }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss">
+  @import "../assets/css/main.scss";
 </style>

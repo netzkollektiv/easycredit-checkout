@@ -46,8 +46,8 @@ $transition: all 0.15s ease-in-out;
 $transition-timing: cubic-bezier(0.73, 0.32, 0.14, 0.99);
 
 // App
-easycredit-checkout-label,
-easycredit-checkout {
+.ec-checkout-container,
+.ec-checkout-label-container {
   font-family: $font-family;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -184,7 +184,7 @@ easycredit-checkout {
   .ec-checkout-label {
     padding-right: 45px;
     min-height: 35px;
-    background: transparent url('../img/ratenkauf-icon.svg') right center no-repeat;
+    background: transparent url('../assets/img/ratenkauf-icon.svg') right center no-repeat;
     background-size: 35px;
 
     @media (min-width: $breakpoint-sm-up) {
@@ -475,7 +475,7 @@ easycredit-checkout {
         width: 25px;
         height: 25px;
         background-color: transparent;
-        background-image: url(../img/icon-close.svg);
+        background-image: url(../assets/img/icon-close.svg);
         background-position: center;
         background-repeat: no-repeat;
         background-size: 15px;

@@ -1,7 +1,9 @@
 <template>
-  <div class="ec-checkout-label">
-    <strong>{{ title }}</strong><br />
-    <small>{{ message }}</small>
+  <div class="ec-checkout-label-container">
+    <div class="ec-checkout-label">
+      <strong>{{ title }}</strong><br>
+      <small>{{ message }}</small>
+    </div>
   </div>
 </template>
 
@@ -22,5 +24,6 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss">
+  @import "../assets/css/main.scss";
 </style>
