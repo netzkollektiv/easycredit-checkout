@@ -81,18 +81,6 @@ export default {
       this.$emit('input', this.value);
     }
   },
-  mounted () {
-    /*
-    bus.$on('instalmentToggled', (index) => {
-      if (this.instalments.length == 0) {
-        return;
-      }
-      this.selectedIndex = index
-      this.totals.interest = this.instalments[index].zinsen.anfallendeZinsen
-      this.totals.total = this.instalments[index].gesamtsumme
-    })
-    */
-  },
   methods: {
     toggleList () {
       this.collapsing = !this.collapsing;

@@ -46,4 +46,7 @@ module.exports = {
     config => {
       enableShadowCss(config);
     },
+  devServer: {
+    disableHostCheck: true
+  }
 }

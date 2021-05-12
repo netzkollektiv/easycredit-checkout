@@ -1,13 +1,17 @@
 {
-  "name": "easycredit-checkout",
+  "name": "@ratenkaufbyeasycredit/easycredit-components",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "repository": "github.com/netzkollektiv/easycredit-components",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "build-wc": "vue-cli-service build --target wc-async --name easycredit-components --inline-vue 'src/components/Checkout.vue,src/components/CheckoutLabel.vue'",
+    "build": "yarn build:wc; yarn build:demo",
+    "build:wc": "vue-cli-service build --target wc-async --name easycredit-components --inline-vue 'src/components/Checkout.vue,src/components/CheckoutLabel.vue'; rm dist/demo.html",
+    "build:demo" : "./bin/build-demo.sh",
     "lint": "vue-cli-service lint"
   },
+  "main": "dist/easycredit-components.js",
+  "unpkg": "dist/easycredit-components.min.js",
   "dependencies": {
     "core-js": "^2.6.5",
     "fetch-jsonp": "^1.1.3",

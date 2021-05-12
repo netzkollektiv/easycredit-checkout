@@ -159,11 +159,6 @@ export default {
   components: {
     Instalments
   },
-  filters: {
-    formatCurrency (value) {
-      return (value) ? String(value).replace(new RegExp('\\.', 'g'), ',') + '  €' : '';
-    }
-  },
   props: {
     isActive: { 
       type: Boolean, 
@@ -302,7 +297,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
   @import "../assets/css/main.scss";
 </style>

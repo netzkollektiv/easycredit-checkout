@@ -17,11 +17,6 @@
 <script>
 export default {
   name: 'Instalment',
-  filters: {
-    formatCurrency (value) {
-      return (value) ? String(value).replace(new RegExp('\\.', 'g'), ',') + '  €' : '';
-    }
-  },
   props: {
     instalment: Object,
     value: Number
