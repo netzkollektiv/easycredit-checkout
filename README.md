@@ -8,7 +8,7 @@ Th ratenkauf by easyCredit Web Components are a set of VueJS web components to b
 
 The Checkout Label component can be used to display ratenkauf by easyCredit as payment method within a list. It is used to display the payment method consistently accross different stores.
 
-![Checkout Label component](examples/easycredit-components-checkout-label.png)
+<img src="https://raw.githubusercontent.com/netzkollektiv/easycredit-components/integration/examples/easycredit-components-checkout-label.png" alt="Checkout Label component" width="400">
 
 ```
 <easycredit-components-checkout-label>
@@ -18,7 +18,7 @@ The Checkout Label component can be used to display ratenkauf by easyCredit as p
 
 The Checkout component acts as payment form and will usually be shown after the payment method was selected by the user. The user can instantly interact with the payment method and will be asked for further information (e.g. prefix, privacy agreement) prior to being redirected.
 
-![Checkout component](examples/easycredit-components-checkout.png)
+<img src="https://raw.githubusercontent.com/netzkollektiv/easycredit-components/integration/examples/easycredit-components-checkout.png" alt="Checkout component" width="400">
 
 ```
 <easycredit-components-checkout amount="2999" webshop-id="1234">
