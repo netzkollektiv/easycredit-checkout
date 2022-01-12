@@ -12,14 +12,14 @@
       <ul class="ec-checkout__instalments payment-plan">
         <li class="is-selected">
           <label>
-            <span>{{ getPaymentPlan.anzahlRaten }} Raten</span>
-            <span>à {{ getPaymentPlan.betragRate|formatCurrency }}</span>
+            <span>{{ getPaymentPlan.numberOfInstallments }} Raten</span>
+            <span>à {{ getPaymentPlan.installment|formatCurrency }}</span>
           </label>
         </li>
       </ul>
       <p class="ec-checkout__small-print">
         <small>Die Raten im Detail:
-          {{ getPaymentPlan.anzahlRaten - 1 }} x {{ getPaymentPlan.betragRate|formatCurrency }}, 1 x {{ getPaymentPlan.betragLetzteRate|formatCurrency }}
+          {{ getPaymentPlan.numberOfInstallments - 1 }} x {{ getPaymentPlan.installment|formatCurrency }}, 1 x {{ getPaymentPlan.lastInstallment|formatCurrency }}
         </small>
       </p>
     </div>
@@ -152,12 +152,16 @@
 
 <script>
 import Instalments from './Instalments.vue'
-import fetchJsonp from 'fetch-jsonp'
 
 export default {
   name: 'Checkout',
   components: {
     Instalments
+  },
+  filters: {
+    formatCurrency (value) {
+      return (value) ? String(Number(value).toFixed(2)).replace(new RegExp('\\.', 'g'), ',') + '  €' : '';
+    }
   },
   props: {
     isActive: { 
@@ -245,15 +249,15 @@ export default {
   },
   watch: {
     selectedInstalment(value) {
-      var instalment = this.instalments.find((item)=> item.zahlungsplan.anzahlRaten == value)
-      this.totals.interest = instalment.zinsen.anfallendeZinsen
-      this.totals.total = instalment.gesamtsumme
+      var instalment = this.instalments.find((item) => item.term == value)
+      this.totals.interest = instalment.totalInterest
+      this.totals.total = instalment.totalAmount
     }
   },
   async mounted () {
     if (this.amount > 0 && !this.alert && !this.paymentPlan) {
       await this.getInstalments(this.amount)
-      this.selectedInstalment = this.instalments.find(()=> true).zahlungsplan.anzahlRaten
+      this.selectedInstalment = this.instalments.find(() => true).term
       await this.getAgreement()
     }
   },
@@ -272,23 +276,31 @@ export default {
         .indexOf(this.modal.prefix.value) >= 0
     },
     getInstalments () {
-      return fetchJsonp('//ratenkauf.easycredit.de/ratenkauf-ws/rest/v2/modellrechnung/durchfuehren?webshopId=' + this.webshopId + '&finanzierungsbetrag=' + this.amount)
-        .then((response) => {
-          return response.json()
-        }).then((json) => {
-          this.instalments = json.ergebnis.reverse()
-          this.example = json.repraesentativesBeispiel
-
-        }).catch(() => {
-          this.alert = 'Die Bestellsumme liegt außerhalb der zulässigen Beträge (200&nbsp;-&nbsp;10.000&nbsp;€).'
+      return fetch('https://ratenkauf.easycredit.de/api/ratenrechner/v3/webshop/' + this.webshopId + '/installmentplans', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json; charset=utf-8'},
+        body: JSON.stringify({
+          "articles": [{
+            "identifier": "single",
+            "price": this.amount
+          }]
         })
+      }).then((response) => {
+        return response.json()
+      }).then((json) => {
+        const instalment = json.installmentPlans.find(() => true)
+        this.instalments = instalment.plans.reverse()
+        this.example = instalment.example
+      }).catch(() => {
+        this.alert = 'Die Bestellsumme liegt außerhalb der zulässigen Beträge (200&nbsp;-&nbsp;10.000&nbsp;€).'
+      })
     },
     getAgreement () {
-      return fetchJsonp('//ratenkauf.easycredit.de/ratenkauf-ws/rest/v2/texte/zustimmung/' + this.webshopId)
+      return fetch('https://ratenkauf.easycredit.de/api/payment/v3/webshop/' + this.webshopId)
         .then((response) => {
           return response.json()
         }).then((json) => {
-          this.modal.agreement.label = json.zustimmungDatenuebertragungPaymentPage
+          this.modal.agreement.label = json.privacyApprovalForm
         }).catch(() => {
           this.alert = 'Es ist ein Fehler aufgetreten.'
         })

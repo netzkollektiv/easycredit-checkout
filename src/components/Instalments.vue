@@ -3,7 +3,7 @@
     <ul class="ec-checkout__instalments base">
       <instalment
         v-for="(item, index) in listBase"
-        :key="item.anzahlRaten"
+        :key="item.term"
         v-model="selectedInstalment"
         :index="index"
         :instalment="item"
@@ -16,7 +16,7 @@
     >
       <instalment
         v-for="(item, index) in listExtended"
-        :key="item.anzahlRaten"
+        :key="item.term"
         v-model="selectedInstalment"
         :index="rows + index"
         :instalment="item"
@@ -89,8 +89,8 @@ export default {
       this.button = !this.collapsed ? 'Weitere Raten anzeigen +' : 'Weniger Raten anzeigen -';
 
       
-      if ( this.instalments.findIndex((item)=> item.zahlungsplan.anzahlRaten == this.selectedInstalment) >= this.rows ) {
-        this.selectedInstalment = this.instalments.find(()=>true).zahlungsplan.anzahlRaten
+      if ( this.instalments.findIndex((item) => item.term == this.selectedInstalment) >= this.rows ) {
+        this.selectedInstalment = this.instalments.find(() => true).term
       }
     }    
   }

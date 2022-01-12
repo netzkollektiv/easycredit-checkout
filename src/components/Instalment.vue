@@ -1,15 +1,15 @@
 <template>
   <li>
     <input 
-      :id="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten" 
-      v-model="selectedInstalment" 
-      type="radio" 
-      name="easycredit-duration" 
-      :value="instalment.zahlungsplan.anzahlRaten"
+      :id="'easycreditInstallment' + instalment.term"
+      v-model="selectedInstalment"
+      type="radio"
+      name="easycredit-duration"
+      :value="instalment.term"
       @change.stop=""
     >
-    <label :for="'easycreditInstallment' + instalment.zahlungsplan.anzahlRaten">
-      <span>{{ instalment.zahlungsplan.anzahlRaten }} Monate</span> <span>{{ instalment.zahlungsplan.betragRate|formatCurrency }} / Monat</span>
+    <label :for="'easycreditInstallment' + instalment.term">
+      <span>{{ instalment.term }} Monate</span> <span>{{ instalment.installment|formatCurrency }} / Monat</span>
     </label>
   </li>
 </template>
@@ -17,6 +17,11 @@
 <script>
 export default {
   name: 'Instalment',
+  filters: {
+    formatCurrency (value) {
+      return (value) ? String(Number(value).toFixed(2)).replace(new RegExp('\\.', 'g'), ',') + '  €' : '';
+    }
+  },
   props: {
     instalment: Object,
     value: Number
